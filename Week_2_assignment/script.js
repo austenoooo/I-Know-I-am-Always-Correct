@@ -1,18 +1,23 @@
-// Tutorials I followed: https://codelabs.developers.google.com/codelabs/tensorflowjs-object-detection#0
+// Tutorials I followed to work with Coco-SSD from Tensorflow.js: https://codelabs.developers.google.com/codelabs/tensorflowjs-object-detection#0
 
 const video = document.getElementById('webcam');
 const liveView = document.getElementById('liveView');
-const demosSection = document.getElementById('demos');
 
 // store hte resulting model in the global scope of our app;
 var model = undefined;
-// var model = true;
-// demosSection.classList.remove('invisible');
 
 cocoSsd.load().then(function (loadedModel){
   model = loadedModel;
-  // Show demo section now model is ready to use
-  demosSection.classList.remove('invisible');
+  loadCamera();
+});
+
+// prompt the user to grant webcam access
+navigator.permissions.query({name: 'camera'})
+.then((permissionObject) => {
+  console.log(permissionObject.state);
+})
+.catch((error) => {
+  console.log('Got error ' + error);
 });
 
 
@@ -22,17 +27,19 @@ function getUserMediaSupported() {
 }
 
 // If webcam supported, load the camera
-if (getUserMediaSupported()){
-  window.addEventListener('DOMContentLoaded', enableCam);
+function loadCamera(){
+  if (getUserMediaSupported()){
+    enableCam();
+  }
+  else{
+    console.warn('getUserMedia() is not supported by your browser');
+  }
 }
-else{
-  console.warn('getUserMedia() is not supported by your browser');
-}
+
   
 function enableCam(event){
   // only continue if the COCO-SSD has finished loading
   if (!model){
-    console.log("model cannot be loaded")
     return;
   }
 
@@ -54,32 +61,34 @@ function predictWebcam(){
 
     // Remove any highlighting we did previous frame
     for (let i = 0; i < children.length; i++){
-      liveView.removeChild(children[i]);
+      // liveView.removeChild(children[i]);
     }
     children.splice(0);
 
-    // loop through predictions and draw them to the live view if they have a high confidence score
-    for (let n = 0; n < predictions.length; n++){
-      if (predictions[n].score > 0.3) {
+    // Now lets loop through predictions and draw them to the live view if
+    // they have a high confidence score.
+    for (let n = 0; n < predictions.length; n++) {
+      // If we are over 66% sure we are sure we classified it right, draw it!
+      if (predictions[n].score > 0.66) {
         const p = document.createElement('p');
-        p.innerText = predictions[n].class + ' - with '
-          + Math.round(parseFloat(predictions[n].score) * 100)
-          + '% confidence.';
+        p.innerText = predictions[n].class  + ' - with ' 
+            + Math.round(parseFloat(predictions[n].score) * 100) 
+            + '% confidence.';
         p.style = 'margin-left: ' + predictions[n].bbox[0] + 'px; margin-top: '
-          + (predictions[n].bbox[1] - 10) + 'px; width: '
-          + (predictions[n].bbox[2] - 10) + 'px; top: 0; left: 0;';
-        
+            + (predictions[n].bbox[1] - 10) + 'px; width: ' 
+            + (predictions[n].bbox[2] - 10) + 'px; top: 0; left: 0;';
+
         const highlighter = document.createElement('div');
         highlighter.setAttribute('class', 'highlighter');
         highlighter.style = 'left: ' + predictions[n].bbox[0] + 'px; top: '
-          + predictions[n].bbox[1] + 'px; width: '
-          + predictions[n].bbox[2] + 'px; height: '
-          + predictions[n].bbox[3] + 'px;';
-        
-        liveView.appendChild(highlighter);
-        liveView.appendChild(p);
-        children.push(highlighter);
-        children.push(p);
+            + predictions[n].bbox[1] + 'px; width: ' 
+            + predictions[n].bbox[2] + 'px; height: '
+            + predictions[n].bbox[3] + 'px;';
+
+        // liveView.appendChild(highlighter);
+        // liveView.appendChild(p);
+        // children.push(highlighter);
+        // children.push(p);
       }
     }
     
@@ -87,3 +96,16 @@ function predictWebcam(){
   });
 }
 
+
+// p5js code
+function setup(){
+  var myCanvas = createCanvas(window.innerWidth, window.innerHeight);
+  myCanvas.parent('graphic-interface');
+  background(255, 0, 0, 20);
+}
+
+function draw(){
+  textFont("VT323");
+  textSize(50);
+  text('this is just a test', 100, 100);
+}

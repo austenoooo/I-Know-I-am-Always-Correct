@@ -14,18 +14,20 @@
     <!-- stylesheet -->
     <link rel="stylesheet" href="style.css" />
 
+    <!-- import font from google font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
     
   </head>
   <body>
-    
-    <section id="demos" class="invisible">
 
-      <p>Hold some objects up close to your webcam to get a real-time classification!</p>
-      
-      <div id="liveView" class="webcam">
-        <video id="webcam" autoplay width="640" height="480"></video>
-      </div>
-    </section>
+    <div id="entire-screen">
+      <video id="webcam" autoplay width="640" height="480"></video>
+      <div id="graphic-interface"></div>
+    </div>
+    
+    
     
   </body>
 
