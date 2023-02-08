@@ -123,12 +123,12 @@ let capyIndex = 4;
 let sentenceIndex = 0;
 let sentenceTotal = 5;
 let startFrameCount = undefined;
-let gapFrame = 100;
+let gapFrame = 80;
 let recordedStart = false;
 
 
 function setup(){
-  var myCanvas = createCanvas(window.innerWidth, window.innerHeight * 0.5 - 123);
+  var myCanvas = createCanvas(window.innerWidth, window.innerHeight * 0.5 - 123 - 50);
   myCanvas.parent('graphic-interface');
   background('#871E51');
 
