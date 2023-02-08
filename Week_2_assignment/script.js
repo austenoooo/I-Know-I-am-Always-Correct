@@ -98,14 +98,31 @@ function predictWebcam(){
 
 
 // p5js code
+
+let dialougeBox;
+let capy = [];
+
+
 function setup(){
-  var myCanvas = createCanvas(window.innerWidth, window.innerHeight);
+  var myCanvas = createCanvas(window.innerWidth, window.innerHeight * 0.5 - 123);
   myCanvas.parent('graphic-interface');
-  background(255, 0, 0, 20);
+  background('#871E51');
+
+  // define font type
+  textFont("VT323");
+}
+
+function preload(){
+  dialougeBox = loadImage('assets/dialouge_box.png');
+  for (let i = 1; i <= 5; i++){
+    let fileName = 'assets/capy/' + i + '.png';
+    let img = loadImage(fileName);
+    capy.push(img);
+  }
 }
 
 function draw(){
-  textFont("VT323");
-  textSize(50);
-  text('this is just a test', 100, 100);
+  
+  // place all the images
+  image(capy[0], 0.5 * width - 300, 20, 26 * 5, 18 * 5);
 }
