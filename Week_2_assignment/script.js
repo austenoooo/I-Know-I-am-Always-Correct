@@ -136,7 +136,9 @@ function setup(){
   textFont("VT323");
 
   // voice
-  // myVoice = new p5.Speech();
+  myVoice = new p5.Speech();
+  // myVoice.listVoices();
+  myVoice.setVoice(3);
 }
 
 function preload(){
@@ -150,17 +152,8 @@ function preload(){
 
 function draw(){
 
-  // console.log(startInteraction);
-  // console.log(sentenceIndex);
-
   // start interaction  
   if (startInteraction){
-
-    // trying to add voice over, not working at the moment
-    // dialougeText = "I'm not sure what it is ... but ...";
-    // myVoice.speak(dialougeText);
-    // myVoice.onEnd = startSpeak;
-    // sentenceIndex += 1;
 
     if (!recordedStart){
       startFrameCount = frameCount;
@@ -186,6 +179,8 @@ function draw(){
       else{
         dialougeText = "...";
       }
+
+      myVoice.speak(dialougeText);
     
       sentenceIndex += 1;
       if (sentenceIndex > sentenceTotal){
@@ -193,6 +188,7 @@ function draw(){
         startInteraction = false;
         sentenceIndex = 0;
         startFrameCount = undefined;
+        recordedStart = false;
       }
     }
     
@@ -214,33 +210,6 @@ function draw(){
 
 }
 
-
-
-
-// trying to add voice over to the dialouge text, but I couldn't have the text to change once the previous sentence finishes
-function startSpeak(){
-  console.log(sentenceIndex);
-  if (sentenceIndex == 0){
-    dialougeText = "I'm not sure what it is ... but ...";
-  }
-  else if (sentenceIndex >= 1 && sentenceIndex <= 3){
-    dialougeText ="This is definitely not a " + correctObjectList[sentenceIndex - 1] + " ...";
-  }
-  else{
-    dialougeText ="I know I am always correct!";
-  }
-
-  myVoice.speak(dialougeText);
-
-  sentenceIndex += 1;
-  if (sentenceIndex > sentenceTotal){
-    // reset interaction
-    startInteraction = false;
-    sentenceIndex = 0;
-    // stop voice
-    myVoice.stop();
-  }
-}
 
 
 // find three objects from the object list that are not the predicted category
