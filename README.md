@@ -1,4 +1,4 @@
-I know I am Always Correct!
+# I know I am always correct!
 
 Machine Learning for the Web - Week 2 Assignment
 
