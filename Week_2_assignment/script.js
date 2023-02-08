@@ -121,7 +121,7 @@ let dialougeText = '...';
 let capyIndex = 4;
 
 let sentenceIndex = 0;
-let sentenceNum = 5;
+let sentenceTotal = 4;
 
 
 function setup(){
@@ -147,11 +147,15 @@ function preload(){
 
 function draw(){
 
+  console.log(startInteraction);
+  console.log(sentenceIndex);
+
   // start interaction  
   if (startInteraction){
     dialougeText = "I'm not sure what it is ... but ...";
-    myVoice.speak(dialougeText);
-    myVoice.onEnd = secondSentence;
+    // myVoice.speak(dialougeText);
+    // myVoice.onEnd = startSpeak;
+    sentenceIndex += 1;
   }
  
   
@@ -170,35 +174,11 @@ function draw(){
 
 }
 
-function secondSentence(){
-  dialougeText = "This is definitely not a " + correctObjectList[0] + " ...";
-  myVoice.speak(dialougeText);
-  myVoice.end = thirdSentence;
-}
-
-function thirdSentence(){
-  dialougeText = "And this is definitely not a " + correctObjectList[1] + " ...";
-  myVoice.speak(dialougeText);
-  myVoice.end = forthSentence;
-}
-
-function forthSentence(){
-  dialougeText = "And this is definitely not a " + correctObjectList[2] + " ...";
-  myVoice.speak(dialougeText);
-  myVoice.end = fifthSentence;
-}
-
-function fifthSentence(){
-  dialougeText = "I know I am always correct!";
-  myVoice.speak(dialougeText);
-  
-  // reset interaction
-  startInteraction = false;
-}
 
 
-
+// trying to add voice over to the dialouge text, but I couldn't have the text to change once the previous sentence finishes
 function startSpeak(){
+  console.log(sentenceIndex);
   if (sentenceIndex == 0){
     dialougeText = "I'm not sure what it is ... but ...";
   }
@@ -210,13 +190,14 @@ function startSpeak(){
   }
 
   myVoice.speak(dialougeText);
-  myVoice.end = startSpeak;
 
   sentenceIndex += 1;
-  if (sentenceIndex == sentenceNum){
+  if (sentenceIndex > sentenceTotal){
     // reset interaction
     startInteraction = false;
     sentenceIndex = 0;
+    // stop voice
+    myVoice.stop();
   }
 }
 
