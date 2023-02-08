@@ -25,7 +25,7 @@ video{
     width: 600px;
     height: 446px;
     left: calc(50vw - 300px);
-    top: calc(50vh - 223px - 100px);
+    top: calc(50vh - 323px);
     z-index: 2;
 }
 
@@ -49,3 +49,10 @@ video{
   top: calc(50vh + 123px );
 }
 
+.highlighter{
+    background: rgba(135, 30, 81, 0.25);
+    border: 4px solid #871E51;
+    border-radius: 5px;
+    z-index: 1;
+    position: absolute;
+}

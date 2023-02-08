@@ -1,7 +1,10 @@
 // Tutorials I followed to work with Coco-SSD from Tensorflow.js: https://codelabs.developers.google.com/codelabs/tensorflowjs-object-detection#0
 
+// refresh page when resized 
+window.onresize = function(){ location.reload(); }
+
 const video = document.getElementById('webcam');
-const liveView = document.getElementById('liveView');
+const liveView = document.getElementById('live-view');
 
 // store hte resulting model in the global scope of our app;
 var model = undefined;
@@ -54,41 +57,44 @@ function enableCam(event){
   });
 }
 
-var children = [];
+var child = undefined;
+var currentObject = undefined;
+
+const leftOffset = 0.5 * window.innerWidth - 300;
+const topOffset = 0.5 * window.innerHeight - 323;
+
+
 
 function predictWebcam(){
   model.detect(video).then(function (predictions) {
 
-    // Remove any highlighting we did previous frame
-    for (let i = 0; i < children.length; i++){
-      // liveView.removeChild(children[i]);
+    // Remove any highlighting in the previous frame
+    if (child != undefined){
+      liveView.removeChild(child);
     }
-    children.splice(0);
+    child = undefined;
 
-    // Now lets loop through predictions and draw them to the live view if
-    // they have a high confidence score.
+    // Loop through the prediction results to find the first result which class is not human
     for (let n = 0; n < predictions.length; n++) {
-      // If we are over 66% sure we are sure we classified it right, draw it!
-      if (predictions[n].score > 0.66) {
-        const p = document.createElement('p');
-        p.innerText = predictions[n].class  + ' - with ' 
-            + Math.round(parseFloat(predictions[n].score) * 100) 
-            + '% confidence.';
-        p.style = 'margin-left: ' + predictions[n].bbox[0] + 'px; margin-top: '
-            + (predictions[n].bbox[1] - 10) + 'px; width: ' 
-            + (predictions[n].bbox[2] - 10) + 'px; top: 0; left: 0;';
+    
+      if (predictions[n].class != 'person'){
+        
+        currentObject = predictions[n].class;
 
+        // draw the bouding box
         const highlighter = document.createElement('div');
         highlighter.setAttribute('class', 'highlighter');
-        highlighter.style = 'left: ' + predictions[n].bbox[0] + 'px; top: '
-            + predictions[n].bbox[1] + 'px; width: ' 
-            + predictions[n].bbox[2] + 'px; height: '
-            + predictions[n].bbox[3] + 'px;';
+        highlighter.style = 'left: ' 
+        + (parseFloat(predictions[n].bbox[0]) + leftOffset) + 'px; top: ' 
+        + (parseFloat(predictions[n].bbox[1]) + topOffset) + 'px; width: '
+        + predictions[n].bbox[2] + 'px; height: '
+        + predictions[n].bbox[3] + 'px;';
 
-        // liveView.appendChild(highlighter);
-        // liveView.appendChild(p);
-        // children.push(highlighter);
-        // children.push(p);
+        liveView.appendChild(highlighter);
+        child = highlighter;
+
+        // break loop if result is found
+        break;
       }
     }
     
