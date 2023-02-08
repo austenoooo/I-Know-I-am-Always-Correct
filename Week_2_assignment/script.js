@@ -121,7 +121,10 @@ let dialougeText = '...';
 let capyIndex = 4;
 
 let sentenceIndex = 0;
-let sentenceTotal = 4;
+let sentenceTotal = 5;
+let startFrameCount = undefined;
+let gapFrame = 100;
+let recordedStart = false;
 
 
 function setup(){
@@ -133,7 +136,7 @@ function setup(){
   textFont("VT323");
 
   // voice
-  myVoice = new p5.Speech();
+  // myVoice = new p5.Speech();
 }
 
 function preload(){
@@ -147,15 +150,52 @@ function preload(){
 
 function draw(){
 
-  console.log(startInteraction);
-  console.log(sentenceIndex);
+  // console.log(startInteraction);
+  // console.log(sentenceIndex);
 
   // start interaction  
   if (startInteraction){
-    dialougeText = "I'm not sure what it is ... but ...";
+
+    // trying to add voice over, not working at the moment
+    // dialougeText = "I'm not sure what it is ... but ...";
     // myVoice.speak(dialougeText);
     // myVoice.onEnd = startSpeak;
-    sentenceIndex += 1;
+    // sentenceIndex += 1;
+
+    if (!recordedStart){
+      startFrameCount = frameCount;
+      recordedStart = true;
+    }
+
+    if ((frameCount - startFrameCount) % gapFrame == 0){
+      if (sentenceIndex == 0){
+        dialougeText = "I'm not sure what it is ... but ...";
+      }
+      else if(sentenceIndex == 1){
+        dialougeText = "This is definitely NOT a " + correctObjectList[0] + " ...";
+      }
+      else if (sentenceIndex == 2){
+        dialougeText = "And this is definitely NOT a " + correctObjectList[1] + " ...";
+      }
+      else if (sentenceIndex == 3){
+        dialougeText = "And ... this is also NOT a " + correctObjectList[2] + " ...";
+      }
+      else if (sentenceIndex == 4){
+        dialougeText = "You see, I know I am always correct!";
+      }
+      else{
+        dialougeText = "...";
+      }
+    
+      sentenceIndex += 1;
+      if (sentenceIndex > sentenceTotal){
+        // reset interaction
+        startInteraction = false;
+        sentenceIndex = 0;
+        startFrameCount = undefined;
+      }
+    }
+    
   }
  
   
@@ -173,6 +213,7 @@ function draw(){
 
 
 }
+
 
 
 
@@ -207,16 +248,25 @@ function findObject(){
   var objectList = [];
 
   while (objectList.length < 3){
-    console.log('reach here');
     // exclude the first index person
-    let randomIndex = Math.floor(Math.random() * 89) + 2;
-    let object = classes[randomIndex];
+    
+    let object = classes[getRandomProperty(classes)];
     let objectName = object.displayName;
-    console.log(objectName);
-    if (objectName != currentObject){
+    let repeated = false;
+    for (let i = 0; i < objectList.length; i++){
+      if (objectName == objectList[i]){
+        repeated = true;
+      }
+    }
+    if (objectName != currentObject && !repeated){
       objectList.push(objectName);
     }
   }
 
   return objectList;
+}
+
+function getRandomProperty(obj) {
+  const keys = Object.keys(obj);
+  return keys[Math.floor(Math.random() * keys.length)];
 }
