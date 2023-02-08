@@ -150,6 +150,7 @@ function setup() {
   // voice
   myVoice = new p5.Speech();
   // myVoice.listVoices();
+  // TODO: can I change my voices?
   myVoice.setVoice(3);
 }
 
