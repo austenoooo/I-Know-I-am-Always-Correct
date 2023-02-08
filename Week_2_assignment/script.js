@@ -60,10 +60,12 @@ function enableCam(event){
 var child = undefined;
 var currentObject = undefined;
 
+let correctObjectList = undefined;
+
 const leftOffset = 0.5 * window.innerWidth - 300;
 const topOffset = 0.5 * window.innerHeight - 323;
 
-
+var startInteraction = false;
 
 function predictWebcam(){
   model.detect(video).then(function (predictions) {
@@ -79,7 +81,14 @@ function predictWebcam(){
     
       if (predictions[n].class != 'person'){
         
-        currentObject = predictions[n].class;
+        
+        // start the interaction if the previous interaction has ended; only update current object when a new current object is updated
+        if (!startInteraction){
+          startInteraction = true;
+          currentObject = predictions[n].class;
+          correctObjectList = findObject();
+          console.log(correctObjectList);
+        }
 
         // draw the bouding box
         const highlighter = document.createElement('div');
@@ -111,6 +120,9 @@ let capy = [];
 let dialougeText = '...';
 let capyIndex = 4;
 
+let sentenceIndex = 0;
+let sentenceNum = 5;
+
 
 function setup(){
   var myCanvas = createCanvas(window.innerWidth, window.innerHeight * 0.5 - 123);
@@ -119,6 +131,9 @@ function setup(){
 
   // define font type
   textFont("VT323");
+
+  // voice
+  myVoice = new p5.Speech();
 }
 
 function preload(){
@@ -131,6 +146,14 @@ function preload(){
 }
 
 function draw(){
+
+  // start interaction  
+  if (startInteraction){
+    dialougeText = "I'm not sure what it is ... but ...";
+    myVoice.speak(dialougeText);
+    myVoice.onEnd = secondSentence;
+  }
+ 
   
   // place capy image
   image(capy[capyIndex], 0.5 * width - 300, 30, 161, 112);
@@ -144,4 +167,75 @@ function draw(){
   fill(0);
   text(dialougeText, 0.5 * width - 60, 53, 328);
 
+
+}
+
+function secondSentence(){
+  dialougeText = "This is definitely not a " + correctObjectList[0] + " ...";
+  myVoice.speak(dialougeText);
+  myVoice.end = thirdSentence;
+}
+
+function thirdSentence(){
+  dialougeText = "And this is definitely not a " + correctObjectList[1] + " ...";
+  myVoice.speak(dialougeText);
+  myVoice.end = forthSentence;
+}
+
+function forthSentence(){
+  dialougeText = "And this is definitely not a " + correctObjectList[2] + " ...";
+  myVoice.speak(dialougeText);
+  myVoice.end = fifthSentence;
+}
+
+function fifthSentence(){
+  dialougeText = "I know I am always correct!";
+  myVoice.speak(dialougeText);
+  
+  // reset interaction
+  startInteraction = false;
+}
+
+
+
+function startSpeak(){
+  if (sentenceIndex == 0){
+    dialougeText = "I'm not sure what it is ... but ...";
+  }
+  else if (sentenceIndex >= 1 && sentenceIndex <= 3){
+    dialougeText ="This is definitely not a " + correctObjectList[sentenceIndex - 1] + " ...";
+  }
+  else{
+    dialougeText ="I know I am always correct!";
+  }
+
+  myVoice.speak(dialougeText);
+  myVoice.end = startSpeak;
+
+  sentenceIndex += 1;
+  if (sentenceIndex == sentenceNum){
+    // reset interaction
+    startInteraction = false;
+    sentenceIndex = 0;
+  }
+}
+
+
+// find three objects from the object list that are not the predicted category
+function findObject(){
+  var objectList = [];
+
+  while (objectList.length < 3){
+    console.log('reach here');
+    // exclude the first index person
+    let randomIndex = Math.floor(Math.random() * 89) + 2;
+    let object = classes[randomIndex];
+    let objectName = object.displayName;
+    console.log(objectName);
+    if (objectName != currentObject){
+      objectList.push(objectName);
+    }
+  }
+
+  return objectList;
 }
