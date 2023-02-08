@@ -102,6 +102,9 @@ function predictWebcam(){
 let dialougeBox;
 let capy = [];
 
+let dialougeText = '...';
+let capyIndex = 4;
+
 
 function setup(){
   var myCanvas = createCanvas(window.innerWidth, window.innerHeight * 0.5 - 123);
@@ -123,6 +126,16 @@ function preload(){
 
 function draw(){
   
-  // place all the images
-  image(capy[0], 0.5 * width - 300, 20, 26 * 5, 18 * 5);
+  // place capy image
+  image(capy[capyIndex], 0.5 * width - 300, 30, 161, 112);
+
+  // place dialouge box image
+  image(dialougeBox, 0.5 * width - 114, 35, 414, 102);
+
+  // place the dialouge text
+  textSize(28);
+  textWrap(WORD);
+  fill(0);
+  text(dialougeText, 0.5 * width - 60, 53, 328);
+
 }
