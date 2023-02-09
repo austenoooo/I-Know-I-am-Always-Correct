@@ -135,6 +135,7 @@ let capyGapFrame = 5;
 let capyMaxIndex = 4;
 let capyIndex = 4;
 
+const vowels = ['a', 'e', 'o', 'u', 'i'];
 
 function setup() {
   var myCanvas = createCanvas(
@@ -200,13 +201,13 @@ function draw() {
         dialougeText = "I'm not sure what it is ... but ...";
       } else if (sentenceIndex == 1) {
         dialougeText =
-          "This is definitely NOT a " + correctObjectList[0] + " ...";
+          "This is definitely NOT " + aOrAn(correctObjectList[0]) + " " + correctObjectList[0] + " ...";
       } else if (sentenceIndex == 2) {
         dialougeText =
-          "And this is definitely NOT a " + correctObjectList[1] + " ...";
+          "And this is definitely NOT " + aOrAn(correctObjectList[1]) + " " + correctObjectList[1] + " ...";
       } else if (sentenceIndex == 3) {
         dialougeText =
-          "And ... this is also NOT a " + correctObjectList[2] + " ...";
+          "And ... this is also NOT " + aOrAn(correctObjectList[2]) + " " + correctObjectList[2] + " ...";
       } else if (sentenceIndex == 4) {
         dialougeText = "You see, I know I am always correct!";
       } else {
@@ -259,6 +260,16 @@ function draw() {
   text(dialougeText, 0.5 * width - 60, 53, 328);
 }
 
+
+function aOrAn(name){
+  if (vowels.includes(name.substring(0, 1))){
+    return "an";
+  }
+  else{
+    return "a";
+  }
+}
+
 // find three objects from the object list that are not the predicted category
 function findObject() {
   var objectList = [];
@@ -270,7 +281,7 @@ function findObject() {
     let objectName = object.displayName;
     let repeated = false;
     for (let i = 0; i < objectList.length; i++) {
-      if (objectName == objectList[i]) {
+      if (objectName == objectList[i] || objectName == 'person') {
         repeated = true;
       }
     }
